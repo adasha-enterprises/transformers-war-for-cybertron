@@ -15,7 +15,7 @@ namespace WarForCybertron.Repository
             Database.EnsureCreated();
         }
 
-        public WarForCybertronContext(DbContextOptions options)
+        private WarForCybertronContext(DbContextOptions options)
                 : base(options)
         {
         }
