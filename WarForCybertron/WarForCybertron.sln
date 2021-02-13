@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29905.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarForCybertron.API", "WarForCybertron.API\WarForCybertron.API.csproj", "{9D4AE806-35AD-463D-A91D-842029724D82}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{56B8B58A-3308-4C4F-AD22-960B5080F8D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarForCybertron.Model", "WarForCybertron.Model\WarForCybertron.Model.csproj", "{1D492B98-3418-42D3-893C-A133E251A260}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarForCybertron.Repository", "WarForCybertron.Repository\WarForCybertron.Repository.csproj", "{EAE9E96A-819D-44D7-BF18-CCC1683474CA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{C1B352D3-7CC8-4293-8F03-B39D7F3A24D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarForCybertron.Service", "WarForCybertron.Service\WarForCybertron.Service.csproj", "{9CE50379-9553-4A57-8FAE-03E3BF8FF16C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9D4AE806-35AD-463D-A91D-842029724D82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D4AE806-35AD-463D-A91D-842029724D82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D4AE806-35AD-463D-A91D-842029724D82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D4AE806-35AD-463D-A91D-842029724D82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D492B98-3418-42D3-893C-A133E251A260}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D492B98-3418-42D3-893C-A133E251A260}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D492B98-3418-42D3-893C-A133E251A260}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D492B98-3418-42D3-893C-A133E251A260}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAE9E96A-819D-44D7-BF18-CCC1683474CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAE9E96A-819D-44D7-BF18-CCC1683474CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAE9E96A-819D-44D7-BF18-CCC1683474CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAE9E96A-819D-44D7-BF18-CCC1683474CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CE50379-9553-4A57-8FAE-03E3BF8FF16C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CE50379-9553-4A57-8FAE-03E3BF8FF16C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CE50379-9553-4A57-8FAE-03E3BF8FF16C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CE50379-9553-4A57-8FAE-03E3BF8FF16C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1D492B98-3418-42D3-893C-A133E251A260} = {56B8B58A-3308-4C4F-AD22-960B5080F8D7}
+		{EAE9E96A-819D-44D7-BF18-CCC1683474CA} = {56B8B58A-3308-4C4F-AD22-960B5080F8D7}
+		{9CE50379-9553-4A57-8FAE-03E3BF8FF16C} = {C1B352D3-7CC8-4293-8F03-B39D7F3A24D8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EE2C1D9F-5FBC-40BD-B0DF-E7850B9FF1F2}
+	EndGlobalSection
+EndGlobal
