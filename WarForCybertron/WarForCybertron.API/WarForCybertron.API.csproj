@@ -5,15 +5,16 @@
     <UserSecretsId>39642c00-456e-47f5-956f-6bb02a08bf23</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="5.0.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WarForCybertron.Common\WarForCybertron.Common.csproj" />
     <ProjectReference Include="..\WarForCybertron.Repository\WarForCybertron.Repository.csproj" />
+    <ProjectReference Include="..\WarForCybertron.Service\WarForCybertron.Service.csproj" />
   </ItemGroup>
 </Project>

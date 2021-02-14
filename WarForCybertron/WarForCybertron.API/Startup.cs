@@ -1,20 +1,16 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using WarForCybertron.Common.Configuration;
 using WarForCybertron.Repository;
+using WarForCybertron.Service.Implementations;
+using WarForCybertron.Service.Interfaces;
 
 namespace WarForCybertron.API
 {
@@ -32,7 +28,7 @@ namespace WarForCybertron.API
         {
             services.AddControllers();
 
-            services.Configure<ConfigSettings>(Configuration);
+            services.Configure<ConfigSettings>(Configuration.GetSection(nameof(ConfigSettings)));
 
             var configSettings = new ConfigSettings();
             Configuration.GetSection(nameof(ConfigSettings)).Bind(configSettings);
@@ -60,7 +56,11 @@ namespace WarForCybertron.API
                 builder.AddFilter("Microsoft", LogLevel.Warning);
             });
 
-            services.AddScoped(typeof(WarForCybertronRepository<,>), typeof(WarForCybertronRepository<,>));
+            services.AddScoped(typeof(IWarForCybertronRepository<,>), typeof(WarForCybertronRepository<,>));
+
+            services.AddScoped<IWarForCybertronService, WarForCybertronService>();
+
+            services.AddAutoMapper(Assembly.Load("WarForCybertron.Service"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,11 +82,9 @@ namespace WarForCybertron.API
                 endpoints.MapControllers();
             });
 
-            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            {
-                var context = serviceScope.ServiceProvider.GetService<WarForCybertronContext>();
-                context.Database.Migrate();
-            }
+            using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            var context = serviceScope.ServiceProvider.GetService<WarForCybertronContext>();
+            context.Database.Migrate();
         }
     }
 }

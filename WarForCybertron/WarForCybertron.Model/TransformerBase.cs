@@ -5,6 +5,7 @@ namespace WarForCybertron.Model
 {
     public abstract class TransformerBase : GuidEntity
     {
+        public string Name { get; set; }
         public Allegiance Allegiance { get; set; }
         [Range(1, 10, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
         public int Strength { get; set; }
