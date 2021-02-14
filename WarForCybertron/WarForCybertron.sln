@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{AFA4DA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarForCybertron.Common", "WarForCybertron.Common\WarForCybertron.Common.csproj", "{78B94286-D008-489F-9347-DF80553F7927}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarForCybertron.Service.Tests", "WarForCybertron.Service.Tests\WarForCybertron.Service.Tests.csproj", "{16CB9C75-4265-4F93-853D-19AF9E1BB9F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{78B94286-D008-489F-9347-DF80553F7927}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78B94286-D008-489F-9347-DF80553F7927}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78B94286-D008-489F-9347-DF80553F7927}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16CB9C75-4265-4F93-853D-19AF9E1BB9F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16CB9C75-4265-4F93-853D-19AF9E1BB9F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16CB9C75-4265-4F93-853D-19AF9E1BB9F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16CB9C75-4265-4F93-853D-19AF9E1BB9F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,6 +60,7 @@ Global
 		{EAE9E96A-819D-44D7-BF18-CCC1683474CA} = {56B8B58A-3308-4C4F-AD22-960B5080F8D7}
 		{9CE50379-9553-4A57-8FAE-03E3BF8FF16C} = {C1B352D3-7CC8-4293-8F03-B39D7F3A24D8}
 		{78B94286-D008-489F-9347-DF80553F7927} = {AFA4DA65-4C4B-4064-9FB1-C45E07636AC1}
+		{16CB9C75-4265-4F93-853D-19AF9E1BB9F5} = {C1B352D3-7CC8-4293-8F03-B39D7F3A24D8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EE2C1D9F-5FBC-40BD-B0DF-E7850B9FF1F2}

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WarForCybertron.Model;
 using WarForCybertron.Model.DTO;
@@ -10,5 +11,9 @@ namespace WarForCybertron.Service.Interfaces
         Task<ServiceResponse<List<TransformerDTO>>> GetTransformers(Allegiance? allegiance, bool sortByRank = false);
 
         Task<ServiceResponse<TransformerDTO>> CreateTransformer(TransformerDTO transformerDTO);
+
+        Task<ServiceResponse<TransformerDTO>> GetTransformer(Guid id);
+
+        Task<ServiceResponse<TransformerDTO>> UpdateTransformer(TransformerDTO transformerDTO);
     }
 }

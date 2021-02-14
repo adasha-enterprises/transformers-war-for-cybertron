@@ -38,6 +38,7 @@ namespace WarForCybertron.Service.Implementations
         {
             var message = string.Empty;
             var transformers = new List<TransformerDTO>();
+            var isSuccess = false;
 
             try
             {
@@ -51,6 +52,8 @@ namespace WarForCybertron.Service.Implementations
                 {
                     transformers = transformers.OrderByDescending(t => t.Rank).ToList();
                 }
+
+                isSuccess = true;
             }
             catch (Exception e)
             {
@@ -58,12 +61,13 @@ namespace WarForCybertron.Service.Implementations
                 message = "Unable to get transformers";
             }
 
-            return new ServiceResponse<List<TransformerDTO>>(transformers, message);
+            return new ServiceResponse<List<TransformerDTO>>(transformers, message, isSuccess);
         }
 
         public async Task<ServiceResponse<TransformerDTO>> CreateTransformer(TransformerDTO transformerDTO)
         {
             var message = string.Empty;
+            var isSuccess = false;
 
             try
             {
@@ -76,6 +80,8 @@ namespace WarForCybertron.Service.Implementations
                 await _transformers.SaveChangesAsync();
 
                 transformerDTO.Id = transformer.Id;
+
+                isSuccess = true;
             }
             catch (Exception e)
             {
@@ -83,7 +89,59 @@ namespace WarForCybertron.Service.Implementations
                 message = "Unable to create Transformer";
             }
 
-            return new ServiceResponse<TransformerDTO>(transformerDTO, message);
+            return new ServiceResponse<TransformerDTO>(transformerDTO, message, isSuccess);
+        }
+
+        public async Task<ServiceResponse<TransformerDTO>> GetTransformer(Guid id)
+        {
+            var message = string.Empty;
+            TransformerDTO transformerDTO = null;
+            var isSuccess = false;
+
+            try
+            {
+                var _ = _transformers.Find(t => t.Id == id);
+
+                transformerDTO = _mapper.Map<TransformerDTO>(_);
+
+                isSuccess = true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                message = "Unable to create Transformer";
+            }
+
+            return await Task.FromResult(new ServiceResponse<TransformerDTO>(transformerDTO, message, isSuccess));
+        }
+
+        public async Task<ServiceResponse<TransformerDTO>> UpdateTransformer(TransformerDTO transformerDTO)
+        {
+            var message = string.Empty;
+            var isSuccess = false;
+
+            try
+            {
+                var existingTransformer = _transformers.Find(t => t.Id == transformerDTO.Id);
+                var updatedTransformer = _mapper.Map<Transformer>(transformerDTO);
+
+                // indicate whether or not a Transformer will be victorious in battle by virtue of their name
+                updatedTransformer.GodMode = _configSettings.TRANSFORMERS_WITH_GOD_MODE.Split(',').Contains(updatedTransformer.Name);
+
+                existingTransformer = _mapper.Map(updatedTransformer, existingTransformer);
+
+                _transformers.Update(existingTransformer);
+                await _transformers.SaveChangesAsync();
+
+                isSuccess = true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                message = "Unable to update Transformer";
+            }
+
+            return new ServiceResponse<TransformerDTO>(transformerDTO, message, isSuccess);
         }
     }
 }

@@ -11,6 +11,8 @@ namespace WarForCybertron.Service.Mapping
             CreateMap<TransformerDTO, Transformer>();
 
             CreateMap<Transformer, TransformerDTO>();
+
+            CreateMap<Transformer, Transformer>();
         }
     }
 }

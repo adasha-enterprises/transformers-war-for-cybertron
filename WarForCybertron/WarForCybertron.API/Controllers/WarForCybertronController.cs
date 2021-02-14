@@ -31,7 +31,7 @@ namespace WarForCybertron.API.Controllers
             _logger = loggerFactory.CreateLogger<WarForCybertronController>();
         }
 
-        // GET: api/transformer
+        // GET: api/warforcybertron
         /// <summary>
         /// Default method to get all Transformers
         /// </summary>
@@ -49,7 +49,7 @@ namespace WarForCybertron.API.Controllers
             {
                 var serviceResponse = await _warForCybertronService.GetTransformers(null, false);
 
-                if (string.IsNullOrEmpty(serviceResponse.ResponseMessage))
+                if (serviceResponse.IsSuccess)
                 {
                     return Ok(serviceResponse.ResponseEntity);
                 }
@@ -67,11 +67,11 @@ namespace WarForCybertron.API.Controllers
             return BadRequest(new { message });
         }
 
-        // POST: api/transformer
+        // POST: api/warforcybertron
         /// <summary>
-        /// Post method to create a transformer
+        /// Post method to create a Transformer
         /// </summary>
-        /// <param name="transformerDTO">The transformer DTO to be created</param>
+        /// <param name="transformerDTO">The Transformer DTO to be created</param>
         /// <returns>The created transformer DTO object</returns>
         /// <response code="201" cref="CreatedAtActionResult">CreatedAtAction("CreateTransformer", new { Transformer = TransformerDTO })</response>
         /// <response code="400" cref="BadRequestObjectResult">BadRequest(new { string message, TransformerDTO transformerDTO })</response>
@@ -86,7 +86,7 @@ namespace WarForCybertron.API.Controllers
             {
                 var serviceResponse = await _warForCybertronService.CreateTransformer(transformerDTO);
 
-                if (string.IsNullOrEmpty(serviceResponse.ResponseMessage))
+                if (serviceResponse.IsSuccess)
                 {
                     return CreatedAtAction("CreateTransformer", new { Transformer = serviceResponse.ResponseEntity });
                 }
@@ -102,6 +102,86 @@ namespace WarForCybertron.API.Controllers
             }
 
             return BadRequest(new { message, transformerDTO });
+        }
+
+        // GET: api/warforcybertron/dae5fa7b-f43d-e911-a1d9-186590cd8cde
+        /// <summary>
+        /// Get method to retrieve a Transformer
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>The transformer DTO object that corresponds to the specified id</returns>
+        /// <response code="200" cref="OkObjectResult">OkObjectResult(TransformerDTO transformerDTO)</response>
+        /// <response code="400" cref="BadRequestObjectResult">BadRequest(new { string message, Guid id })</response>
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<TransformerDTO>> GetTransformer(Guid id)
+        {
+            string message;
+
+            try
+            {
+                var serviceResponse = await _warForCybertronService.GetTransformer(id);
+
+                if (serviceResponse.IsSuccess)
+                {
+                    return Ok(serviceResponse.ResponseEntity);
+                }
+                else
+                {
+                    message = serviceResponse.ResponseMessage;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, id);
+                message = "Unable to get Transformer";
+            }
+
+            return BadRequest(new { message, id });
+        }
+
+        // PUT: api/warforcybertron/dae5fa7b-f43d-e911-a1d9-186590cd8cde
+        /// <summary>
+        /// Put method to update a Transformer
+        /// </summary>
+        /// <param name="id">The id of the Transformer to be updated</param>
+        /// <param name="transformer">The Transformer DTO object to be updated</param>
+        /// <returns>The updated Transformer DTO object included in an action result</returns>
+        /// <response code="200" cref="OkObjectResult">OkObjectResult(TransformerDTO transformerDTO)</response>
+        /// <response code="400" cref="BadRequestObjectResult">BadRequest(new { string message, TransformerDTO transformerDTO })</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPut("{id}")]
+        public async Task<ActionResult<TransformerDTO>> UpdateTransformer(Guid id, [FromBody] TransformerDTO transformer)
+        {
+            string message;
+
+            try
+            {
+                if (id != transformer.Id)
+                {
+                    return BadRequest(transformer);
+                }
+
+                var serviceResponse = await _warForCybertronService.UpdateTransformer(transformer);
+
+                if (serviceResponse.IsSuccess)
+                {
+                    return Ok(transformer);
+                }
+                else
+                {
+                    message = serviceResponse.ResponseMessage;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, transformer);
+                message = "Unable to update transformer";
+            }
+
+            return BadRequest(new { message, transformer });
         }
     }
 }
