@@ -32,41 +32,41 @@ namespace WarForCybertron.API.Controllers
             _logger = loggerFactory.CreateLogger<WarForCybertronController>();
         }
 
-        // GET: api/warforcybertron
-        /// <summary>
-        /// Default get method to get all Transformers
-        /// </summary>
-        /// <returns>A list of all Transformer DTO objects</returns>
-        /// <response code="200" cref="OkObjectResult">OkObjectResult(List&gt;TransformerDTO&lt; faqs)</response>
-        /// <response code="400" cref="BadRequestObjectResult">BadRequest(new { string message })</response>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpGet]
-        public async Task<ActionResult<List<TransformerDTO>>> GetAllTransformers()
-        {
-            string message;
+        //// GET: api/warforcybertron
+        ///// <summary>
+        ///// Default get method to get all Transformers
+        ///// </summary>
+        ///// <returns>A list of all Transformer DTO objects</returns>
+        ///// <response code="200" cref="OkObjectResult">OkObjectResult(List&gt;TransformerDTO&lt; faqs)</response>
+        ///// <response code="400" cref="BadRequestObjectResult">BadRequest(new { string message })</response>
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[HttpGet]
+        //public async Task<ActionResult<List<TransformerDTO>>> GetAllTransformers()
+        //{
+        //    string message;
 
-            try
-            {
-                var serviceResponse = await _warForCybertronService.GetTransformers(null, false);
+        //    try
+        //    {
+        //        var serviceResponse = await _warForCybertronService.GetTransformers(null, false);
 
-                if (serviceResponse.IsSuccess)
-                {
-                    return Ok(serviceResponse.ResponseEntity);
-                }
-                else
-                {
-                    message = serviceResponse.ResponseMessage;
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message);
-                message = "Unable to get Transformers";
-            }
+        //        if (serviceResponse.IsSuccess)
+        //        {
+        //            return Ok(serviceResponse.ResponseEntity);
+        //        }
+        //        else
+        //        {
+        //            message = serviceResponse.ResponseMessage;
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _logger.LogError(e.Message);
+        //        message = "Unable to get Transformers";
+        //    }
 
-            return BadRequest(new { message });
-        }
+        //    return BadRequest(new { message });
+        //}
 
         // POST: api/warforcybertron
         /// <summary>
@@ -89,7 +89,7 @@ namespace WarForCybertron.API.Controllers
 
                 if (serviceResponse.IsSuccess)
                 {
-                    return CreatedAtAction("CreateTransformer", new { Transformer = serviceResponse.ResponseEntity });
+                    return CreatedAtAction("CreateTransformer", serviceResponse.ResponseEntity);
                 }
                 else
                 {
@@ -213,23 +213,37 @@ namespace WarForCybertron.API.Controllers
             return BadRequest(new { message = "Unable to delete transformer", id });
         }
 
+        // GET: api/warforcybertron
         // GET: api/warforcybertron/autobots
+        // GET: api/warforcybertron/decepticons
         /// <summary>
-        /// Get method to get all Autobot Transformers
+        /// Get method to return a list of Transformers; either all, or by allegiance, which is determined by the route
         /// </summary>
-        /// <returns>A list of all Autobot Transformer DTO objects</returns>
+        /// <returns>A list of Transformer DTO objects</returns>
         /// <response code="200" cref="OkObjectResult">OkObjectResult(List&gt;TransformerDTO&lt; faqs)</response>
         /// <response code="400" cref="BadRequestObjectResult">BadRequest(new { string message })</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpGet]
         [HttpGet("autobots")]
-        public async Task<ActionResult<List<TransformerDTO>>> GetAutobots()
+        [HttpGet("decepticons")]
+        public async Task<ActionResult<List<TransformerDTO>>> GetTransformersByType()
         {
             string message;
 
             try
             {
-                var serviceResponse = await _warForCybertronService.GetTransformers(Allegiance.AUTOBOT, false);
+                var transformerType = Request.Path.Value.Split('/')[^1];
+
+                // allow for all possible outcomes to be castable to the same type (Allegiance?) to account for the null
+                var allegiance = transformerType switch
+                {
+                    "autobots" => (Allegiance?) Allegiance.AUTOBOT,
+                    "decepticons" => (Allegiance?) Allegiance.DECEPTICON,
+                    _ => null
+                };
+
+                var serviceResponse = await _warForCybertronService.GetTransformers(allegiance);
 
                 if (serviceResponse.IsSuccess)
                 {
@@ -249,41 +263,41 @@ namespace WarForCybertron.API.Controllers
             return BadRequest(new { message });
         }
 
-        // GET: api/warforcybertron/decepticons
-        /// <summary>
-        /// Get method to get all Decepticon Transformers
-        /// </summary>
-        /// <returns>A list of all Decepticon Transformer DTO objects</returns>
-        /// <response code="200" cref="OkObjectResult">OkObjectResult(List&gt;TransformerDTO&lt; faqs)</response>
-        /// <response code="400" cref="BadRequestObjectResult">BadRequest(new { string message })</response>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpGet("decepticons")]
-        public async Task<ActionResult<List<TransformerDTO>>> GetDecepticons()
-        {
-            string message;
+        //// GET: api/warforcybertron/decepticons
+        ///// <summary>
+        ///// Get method to get all Decepticon Transformers
+        ///// </summary>
+        ///// <returns>A list of all Decepticon Transformer DTO objects</returns>
+        ///// <response code="200" cref="OkObjectResult">OkObjectResult(List&gt;TransformerDTO&lt; faqs)</response>
+        ///// <response code="400" cref="BadRequestObjectResult">BadRequest(new { string message })</response>
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[HttpGet("decepticons")]
+        //public async Task<ActionResult<List<TransformerDTO>>> GetDecepticons()
+        //{
+        //    string message;
 
-            try
-            {
-                var serviceResponse = await _warForCybertronService.GetTransformers(Allegiance.DECEPTICON, false);
+        //    try
+        //    {
+        //        var serviceResponse = await _warForCybertronService.GetTransformers(Allegiance.DECEPTICON, false);
 
-                if (serviceResponse.IsSuccess)
-                {
-                    return Ok(serviceResponse.ResponseEntity);
-                }
-                else
-                {
-                    message = serviceResponse.ResponseMessage;
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message);
-                message = "Unable to get Decepticons";
-            }
+        //        if (serviceResponse.IsSuccess)
+        //        {
+        //            return Ok(serviceResponse.ResponseEntity);
+        //        }
+        //        else
+        //        {
+        //            message = serviceResponse.ResponseMessage;
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _logger.LogError(e.Message);
+        //        message = "Unable to get Decepticons";
+        //    }
 
-            return BadRequest(new { message });
-        }
+        //    return BadRequest(new { message });
+        //}
 
         // GET: api/warforcybertron/dae5fa7b-f43d-e911-a1d9-186590cd8cde/score
         /// <summary>
@@ -296,7 +310,7 @@ namespace WarForCybertron.API.Controllers
         [HttpGet("{id}/score")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<TransformerDTO>> GetTransformerScore(Guid id)
+        public async Task<ActionResult> GetTransformerScore(Guid id)
         {
             string message;
 

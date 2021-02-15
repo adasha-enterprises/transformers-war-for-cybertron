@@ -8,7 +8,7 @@ namespace WarForCybertron.Service.Interfaces
 {
     public interface IWarForCybertronService
     {
-        Task<ServiceResponse<List<TransformerDTO>>> GetTransformers(Allegiance? allegiance, bool sortByRank = false);
+        Task<ServiceResponse<List<TransformerDTO>>> GetTransformers(Allegiance? allegiance);
 
         Task<ServiceResponse<TransformerDTO>> CreateTransformer(TransformerDTO transformerDTO);
 
@@ -19,5 +19,7 @@ namespace WarForCybertron.Service.Interfaces
         Task<bool> DeleteTransformer(Guid id);
 
         Task<int> GetOverallScore(Guid id);
+
+        Task<ServiceResponse<WarSimulation>> SimulateWar();
     }
 }

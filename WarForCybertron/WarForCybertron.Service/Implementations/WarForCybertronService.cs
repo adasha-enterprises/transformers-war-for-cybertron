@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -12,6 +13,7 @@ using WarForCybertron.Common.Configuration;
 using WarForCybertron.Model;
 using WarForCybertron.Model.DTO;
 using WarForCybertron.Repository;
+using WarForCybertron.Service.Helpers;
 using WarForCybertron.Service.Interfaces;
 
 namespace WarForCybertron.Service.Implementations
@@ -39,7 +41,7 @@ namespace WarForCybertron.Service.Implementations
             _context = context;
         }
 
-        public async Task<ServiceResponse<List<TransformerDTO>>> GetTransformers(Allegiance? allegiance, bool sortByRank = false)
+        public async Task<ServiceResponse<List<TransformerDTO>>> GetTransformers(Allegiance? allegiance)
         {
             var message = string.Empty;
             var transformers = new List<TransformerDTO>();
@@ -47,16 +49,8 @@ namespace WarForCybertron.Service.Implementations
 
             try
             {
-                var _ = await _transformers
-                    .Where(t => t.Allegiance == (allegiance != null ? allegiance : t.Allegiance))
-                    .OrderBy(t => t.Name)
-                    .ToListAsync();
+                var _ = await GetTransformers(allegiance, false);
                 transformers = _mapper.Map<List<TransformerDTO>>(_);
-
-                if (sortByRank)
-                {
-                    transformers = transformers.OrderByDescending(t => t.Rank).ToList();
-                }
 
                 isSuccess = true;
             }
@@ -186,6 +180,65 @@ namespace WarForCybertron.Service.Implementations
             }
 
             return await Task.FromResult(score);
+        }
+
+        public async Task<ServiceResponse<WarSimulation>> SimulateWar()
+        {
+            var message = string.Empty;
+            var survivingAutobots = new List<TransformerDTO>();
+            var survivingDecepticons = new List<TransformerDTO>();
+            var isSuccess = false;
+
+            try
+            {
+                var _ = await GetTransformers(null, true);
+                
+                var autobots = new Stack<Transformer>(_.Where(t => t.Allegiance == Allegiance.AUTOBOT).ToList());
+                var decepticons = new Stack<Transformer>(_.Where(t => t.Allegiance == Allegiance.DECEPTICON).ToList());
+
+                for (var i = 0; i < Math.Min(autobots.Count, decepticons.Count); i++)
+                {
+                    // in theory, we shouldn't have a situation where either of the Transformers are null
+                    var autobot = autobots.Peek() != null ? autobots.Pop() : null;
+                    var decepticon = decepticons.Peek() != null ? decepticons.Pop() : null;
+
+                    var victor = TransformerHelpers.TransformerBattle(autobot, decepticon);
+
+                    if (victor == autobot || victor == null)
+                    {
+                        survivingAutobots.Add(_mapper.Map<TransformerDTO>(autobot));
+                    }
+
+                    if (victor == decepticon || victor == null)
+                    {
+                        survivingDecepticons.Add(_mapper.Map<TransformerDTO>(decepticon));
+                    }
+                }
+
+                isSuccess = true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                message = "Unable to get simulate war";
+            }
+
+            return new ServiceResponse<WarSimulation>(new WarSimulation(survivingAutobots, survivingDecepticons), message, isSuccess);
+        }
+
+        private async Task<List<Transformer>> GetTransformers(Allegiance? allegiance, bool sortByRank)
+        {
+            var transformers = await _transformers
+                                .Where(t => t.Allegiance == (allegiance != null ? allegiance : t.Allegiance))
+                                .OrderBy(t => t.Name)
+                                .ToListAsync();
+
+            if (sortByRank)
+            {
+                transformers = transformers.OrderByDescending(t => t.Rank).ToList();
+            }
+
+            return transformers;
         }
     }
 }

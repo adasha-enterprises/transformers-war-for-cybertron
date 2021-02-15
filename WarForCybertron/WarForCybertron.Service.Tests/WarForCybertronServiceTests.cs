@@ -16,7 +16,7 @@ namespace WarForCybertron.Service.Tests
             // arrange
             var setupResponse = GetListOfTransformerDTOObjectsServiceResponse();
             var mockService = new Mock<IWarForCybertronService>();
-            mockService.Setup(s => s.GetTransformers(It.IsAny<Allegiance>(), false).Result).Returns(setupResponse);
+            mockService.Setup(s => s.GetTransformers(It.IsAny<Allegiance>()).Result).Returns(setupResponse);
 
             // act
             var serviceResponse = await mockService.Object.GetTransformers(Allegiance.AUTOBOT);
