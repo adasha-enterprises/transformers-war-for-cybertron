@@ -58,6 +58,54 @@ namespace WarForCybertron.Service.Tests
             Assert.IsType<TransformerDTO>(serviceResponse.ResponseEntity);
         }
 
+        [Fact]
+        public async void CanUpdateTransformerDTOObject()
+        {
+            // arrange
+            var transformerDTO = GetTransformerDTOObject();
+            var setupResponse = GetTransformerDTOObjectServiceResponse();
+            var mockService = new Mock<IWarForCybertronService>();
+            mockService.Setup(s => s.UpdateTransformer(transformerDTO).Result).Returns(setupResponse);
+
+            // act
+            var serviceResponse = await mockService.Object.UpdateTransformer(transformerDTO);
+
+            // assert
+            Assert.IsType<TransformerDTO>(serviceResponse.ResponseEntity);
+        }
+
+        [Theory]
+        [InlineData("4b5c5f91-646e-eb11-b25b-380025b039ec")]
+        public async void CanDeleteTransformerDTOObjectFromId(string id)
+        {
+            // arrange
+            var guid = Guid.Parse(id);
+            var mockService = new Mock<IWarForCybertronService>();
+            mockService.Setup(s => s.DeleteTransformer(It.IsAny<Guid>()).Result).Returns(true);
+
+            // act
+            var response = await mockService.Object.DeleteTransformer(guid);
+
+            // assert
+            Assert.True(response);
+        }
+
+        [Theory]
+        [InlineData("4b5c5f91-646e-eb11-b25b-380025b039ec")]
+        public async void CanGetScoreFromId(string id)
+        {
+            // arrange
+            var guid = Guid.Parse(id);
+            var mockService = new Mock<IWarForCybertronService>();
+            mockService.Setup(s => s.GetOverallScore(It.IsAny<Guid>()).Result).Returns(80);
+
+            // act
+            var response = await mockService.Object.GetOverallScore(guid);
+
+            // assert
+            Assert.IsType<int>(response);
+        }
+
         //TODO: need to think about using generics for returning different types of entities in the service response
         private ServiceResponse<TransformerDTO> GetTransformerDTOObjectServiceResponse()
         {

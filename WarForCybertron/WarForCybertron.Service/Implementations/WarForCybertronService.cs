@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using WarForCybertron.Common.Configuration;
@@ -20,18 +22,21 @@ namespace WarForCybertron.Service.Implementations
         private readonly IWarForCybertronRepository<Transformer, WarForCybertronContext> _transformers;
         private readonly ILogger<WarForCybertronService> _logger;
         private readonly ConfigSettings _configSettings;
+        private readonly WarForCybertronContext _context;
 
         public WarForCybertronService(
                 IWarForCybertronRepository<Transformer, WarForCybertronContext> transformers,
                 ILoggerFactory loggerFactory,
                 IOptions<ConfigSettings> configSettingsOptions,
-                IMapper mapper
+                IMapper mapper,
+                WarForCybertronContext context
             )
         {
             _transformers = transformers;
             _logger = loggerFactory.CreateLogger<WarForCybertronService>();
             _configSettings = configSettingsOptions.Value;
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<ServiceResponse<List<TransformerDTO>>> GetTransformers(Allegiance? allegiance, bool sortByRank = false)
@@ -142,6 +147,45 @@ namespace WarForCybertron.Service.Implementations
             }
 
             return new ServiceResponse<TransformerDTO>(transformerDTO, message, isSuccess);
+        }
+
+        public async Task<bool> DeleteTransformer(Guid id)
+        {
+            var transformerDeleted = false;
+
+            try
+            {
+                var _ = _transformers.Find(t => t.Id == id);
+                await _transformers.DeleteAsync(_);
+                await _transformers.SaveChangesAsync();
+                transformerDeleted = true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+            }
+
+            return await Task.FromResult(transformerDeleted);
+        }
+
+        public async Task<int> GetOverallScore(Guid id)
+        {
+            var score = 0;
+
+            try
+            {
+                var idParam = new SqlParameter("Id", id);
+                var scoreParam = new SqlParameter("Score", SqlDbType.Int) { Direction = ParameterDirection.Output };
+
+                await _context.Database.ExecuteSqlRawAsync("EXEC GetTransformerScore @Id, @Score output", new[] { idParam, scoreParam });
+                score = Convert.ToInt32(scoreParam.Value);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex}");
+            }
+
+            return await Task.FromResult(score);
         }
     }
 }

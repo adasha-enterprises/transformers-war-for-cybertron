@@ -15,5 +15,9 @@ namespace WarForCybertron.Service.Interfaces
         Task<ServiceResponse<TransformerDTO>> GetTransformer(Guid id);
 
         Task<ServiceResponse<TransformerDTO>> UpdateTransformer(TransformerDTO transformerDTO);
+
+        Task<bool> DeleteTransformer(Guid id);
+
+        Task<int> GetOverallScore(Guid id);
     }
 }
