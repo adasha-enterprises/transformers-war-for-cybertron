@@ -196,7 +196,9 @@ namespace WarForCybertron.Service.Implementations
                 var autobots = new Stack<Transformer>(_.Where(t => t.Allegiance == Allegiance.AUTOBOT).ToList());
                 var decepticons = new Stack<Transformer>(_.Where(t => t.Allegiance == Allegiance.DECEPTICON).ToList());
 
-                for (var i = 0; i < Math.Min(autobots.Count, decepticons.Count); i++)
+                var battleCount = Math.Min(autobots.Count, decepticons.Count);
+
+                for (var i = 0; i < battleCount; i++)
                 {
                     // in theory, we shouldn't have a situation where either of the Transformers are null
                     var autobot = autobots.Peek() != null ? autobots.Pop() : null;
@@ -215,6 +217,21 @@ namespace WarForCybertron.Service.Implementations
                     }
                 }
 
+                if (autobots.Count > 0)
+                {
+                    while (autobots.Count > 0)
+                    {
+                        survivingAutobots.Add(_mapper.Map<TransformerDTO>(autobots.Pop()));
+                    }
+                }
+                else if (decepticons.Count > 0)
+                {
+                    while (autobots.Count > 0)
+                    {
+                        survivingDecepticons.Add(_mapper.Map<TransformerDTO>(decepticons.Pop()));
+                    }
+                }
+
                 isSuccess = true;
             }
             catch (Exception e)
@@ -226,6 +243,11 @@ namespace WarForCybertron.Service.Implementations
             return new ServiceResponse<WarSimulation>(new WarSimulation(survivingAutobots, survivingDecepticons), message, isSuccess);
         }
 
+        private void BuildSurvivorsList()
+        {
+
+        }
+
         private async Task<List<Transformer>> GetTransformers(Allegiance? allegiance, bool sortByRank)
         {
             var transformers = await _transformers
@@ -235,7 +257,7 @@ namespace WarForCybertron.Service.Implementations
 
             if (sortByRank)
             {
-                transformers = transformers.OrderByDescending(t => t.Rank).ToList();
+                transformers = transformers.OrderBy(t => t.Rank).ToList();
             }
 
             return transformers;

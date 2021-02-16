@@ -1,4 +1,5 @@
-﻿using WarForCybertron.Model;
+﻿using System;
+using WarForCybertron.Model;
 using WarForCybertron.Service.Helpers;
 using Xunit;
 
@@ -35,6 +36,33 @@ namespace WarForCybertron.Service.Tests
 
             // Assert
             Assert.Equal(expectedOutcome, result);
+        }
+
+        [Fact]
+        public void CanRandomizeTransformerProperties()
+        {
+            var transformer = new Transformer
+            {
+                Courage = 10,
+                Endurance = 10,
+                Firepower = 10,
+                Intelligence = 10,
+                Rank = 10,
+                Skill = 10,
+                Speed = 10,
+                Strength = 10,
+            };
+
+            var originalRating = transformer.OverallRating;
+
+            var rand = new Random(Environment.TickCount);
+
+            foreach (var prop in transformer.RatingProperties)
+            {
+                prop.SetValue(transformer, rand.Next(1, 9));
+            };
+
+            Assert.NotEqual(originalRating, transformer.OverallRating);
         }
     }
 }

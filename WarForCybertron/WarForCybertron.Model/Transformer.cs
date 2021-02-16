@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Reflection;
 
 namespace WarForCybertron.Model
 {
@@ -13,12 +14,15 @@ namespace WarForCybertron.Model
         {
             var overallRating = 0;
 
-            foreach (var prop in GetType().GetProperties().Where(p => p.PropertyType == typeof(int) && p.Name != "OverallRating"))
+            foreach (var prop in RatingProperties)
             {
                 overallRating += (int)prop.GetValue(this);
             };
 
             return overallRating;
         }
+
+        [NotMapped]
+        public PropertyInfo[] RatingProperties { get => GetType().GetProperties().Where(p => p.PropertyType == typeof(int) && p.Name != "OverallRating").ToArray(); }
     }
 }
