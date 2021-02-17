@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WarForCybertron.Common.Configuration
+﻿namespace WarForCybertron.Common.Configuration
 {
     public class ConfigSettings
     {

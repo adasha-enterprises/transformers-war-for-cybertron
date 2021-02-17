@@ -13,54 +13,6 @@ namespace WarForCybertron.Repository
     {
         private static ILogger _logger = ApplicationLogging.CreateLogger("SearchHelpers");
 
-        public static void UpdateDb(this WarForCybertronContext context)
-        {
-            try
-            {
-                var sqlScripts = new List<string>();
-
-                sqlScripts.Add("USE [WarForCybertronTest]" +
-                    Environment.NewLine +
-                    "GO" +
-                    Environment.NewLine +
-                    "SET ANSI_NULLS ON" +
-                    Environment.NewLine +
-                    "GO" +
-                    Environment.NewLine +
-                    "SET QUOTED_IDENTIFIER ON" +
-                    Environment.NewLine +
-                    "GO" +
-                    Environment.NewLine +
-                    "IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'GetTransformerScore')" +
-                    Environment.NewLine +
-                    "DROP PROCEDURE GetTransformerScore" +
-                    Environment.NewLine +
-                    "GO" +
-                    Environment.NewLine +
-                    "CREATE PROCEDURE [dbo].[GetTransformerScore] @Id UNIQUEIDENTIFIER, @Score INT OUTPUT" +
-                    Environment.NewLine +
-                    "AS" +
-                    Environment.NewLine +
-                    "BEGIN" +
-                    Environment.NewLine +
-                    "SELECT @Score = Strength + Intelligence + Speed + Endurance + [Rank] + Courage + Firepower + Skill FROM Transformers WHERE Id = @Id" +
-                    Environment.NewLine +
-                    "END" +
-                    Environment.NewLine +
-                    "GO");
-
-                sqlScripts.ForEach(sql =>
-                    {
-                        ExecuteSqlScript(context, sql);
-                    }
-                );
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"Failed to update database: {e.Message}");
-            }
-        }
-
         public static void EnsureSeedData(this WarForCybertronContext context, string transformersWithGodMode)
         {
             try
@@ -90,18 +42,6 @@ namespace WarForCybertron.Repository
             catch (Exception e)
             {
                 _logger.LogError($"Failed to add seed data: {e.Message}");
-            }
-        }
-
-        private static void ExecuteSqlScript(WarForCybertronContext context, string sql)
-        {
-            try
-            {
-                context.Database.ExecuteSqlRawAsync(sql);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"Failed to execute SQL script: {e.Message}\nsql");
             }
         }
 

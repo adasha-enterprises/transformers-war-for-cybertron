@@ -187,6 +187,7 @@ namespace WarForCybertron.Service.Implementations
             var message = string.Empty;
             var survivingAutobots = new List<TransformerDTO>();
             var survivingDecepticons = new List<TransformerDTO>();
+            var survivors = new List<Transformer>();
             var isSuccess = false;
 
             try
@@ -206,31 +207,26 @@ namespace WarForCybertron.Service.Implementations
 
                     var victor = TransformerHelpers.TransformerBattle(autobot, decepticon);
 
-                    if (victor == autobot || victor == null)
+                    if (victor == null)
                     {
-                        survivingAutobots.Add(_mapper.Map<TransformerDTO>(autobot));
+                        // add both the Autobot and the Decepticon to the list of survivors, if deemed to be a draw
+                        survivors.AddRange(new Transformer[] { autobot, decepticon });
                     }
+                    else
+                    {
+                        survivors.Add(victor == autobot ? autobot : decepticon);
+                    }
+                }
 
-                    if (victor == decepticon || victor == null)
-                    {
-                        survivingDecepticons.Add(_mapper.Map<TransformerDTO>(decepticon));
-                    }
-                }
+                // separate the list of survivors from the individual battles into Autobots and Decepticons
+                survivingAutobots.AddRange(survivors.Where(t => t.Allegiance == Allegiance.AUTOBOT).Select(t => _mapper.Map<TransformerDTO>(t)).ToList());
+                survivingDecepticons.AddRange(survivors.Where(t => t.Allegiance == Allegiance.DECEPTICON).Select(t => _mapper.Map<TransformerDTO>(t)).ToList());
 
-                if (autobots.Count > 0)
-                {
-                    while (autobots.Count > 0)
-                    {
-                        survivingAutobots.Add(_mapper.Map<TransformerDTO>(autobots.Pop()));
-                    }
-                }
-                else if (decepticons.Count > 0)
-                {
-                    while (autobots.Count > 0)
-                    {
-                        survivingDecepticons.Add(_mapper.Map<TransformerDTO>(decepticons.Pop()));
-                    }
-                }
+                // assign the list and stack, depending on which allegiance didn't fight, either Autobots, or Decepticons, but not both
+                (List<TransformerDTO> list, Stack<Transformer> stack) = autobots.Count > 0 ? (survivingAutobots, autobots) : (survivingDecepticons, decepticons);
+
+                // then add the stack to the list 
+                BuildSurvivorsList(list, stack);
 
                 isSuccess = true;
             }
@@ -243,9 +239,12 @@ namespace WarForCybertron.Service.Implementations
             return new ServiceResponse<WarSimulation>(new WarSimulation(survivingAutobots, survivingDecepticons), message, isSuccess);
         }
 
-        private void BuildSurvivorsList()
+        private void BuildSurvivorsList(List<TransformerDTO> transformersList, Stack<Transformer> transformersStack)
         {
-
+            while (transformersStack.Count > 0)
+            {
+                transformersList.Add(_mapper.Map<TransformerDTO>(transformersStack.Pop()));
+            }
         }
 
         private async Task<List<Transformer>> GetTransformers(Allegiance? allegiance, bool sortByRank)

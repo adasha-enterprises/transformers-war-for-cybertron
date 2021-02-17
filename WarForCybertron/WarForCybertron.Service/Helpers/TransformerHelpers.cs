@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using WarForCybertron.Model;
+﻿using WarForCybertron.Model;
 
 namespace WarForCybertron.Service.Helpers
 {
@@ -7,32 +6,29 @@ namespace WarForCybertron.Service.Helpers
     {
         public static Transformer TestForCowardice(Transformer autobot, Transformer decepticon)
         {
-            Transformer transformer = null;
-
             var strength = AutobotPrevails(autobot.Strength, decepticon.Strength, 3);
 
-            // if the results match, then determine which Transformer won, with Autobots equating to true
+            // if both conditions match, then determine which Transformer won, with Autobots equating to true
             if (!(strength ^ decepticon.Courage < 5))
             {
                 return strength ? autobot : decepticon;
             }
 
-            return transformer;
+            return null;
         }
 
-        private static bool AutobotPrevails(int autobotProperty, int decepticonProperty, int differential)
-            => autobotProperty > decepticonProperty + differential;
+        private static bool AutobotPrevails(int autobotProperty, int decepticonProperty, int differential) => autobotProperty > decepticonProperty + differential;
 
         public static Transformer TransformerBattle(Transformer autobot, Transformer decepticon)
         {
             Transformer transformer;
 
-            // if both Transformers possess God mode, then consider it a draw
+            // if Optimus is on one team and Predaking is on another team (i.e. two Transformers who possess God-Mode), the battle ends with no victors on either side
             if (autobot.GodMode && decepticon.GodMode)
             {
                 return null;
             }
-            else if (autobot.GodMode || decepticon.GodMode) // if just one 
+            else if (autobot.GodMode || decepticon.GodMode) // whichever Transformer possesses God-Mode is the automatic winner
             {
                 transformer = autobot.GodMode ? autobot : decepticon;
             }

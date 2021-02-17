@@ -15,11 +15,6 @@ namespace WarForCybertron.Repository
             Database.EnsureCreated();
         }
 
-        private WarForCybertronContext(DbContextOptions options)
-                : base(options)
-        {
-        }
-
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {
             var sqlPst = "SWITCHOFFSET(SYSDATETIMEOFFSET(), '-08:00')";

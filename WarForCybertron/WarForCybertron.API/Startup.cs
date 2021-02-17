@@ -88,8 +88,10 @@ namespace WarForCybertron.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddFile("Logs/ts-{Date}.txt");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -117,7 +119,6 @@ namespace WarForCybertron.API
 
             using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
             var context = serviceScope.ServiceProvider.GetService<WarForCybertronContext>();
-            context.UpdateDb();
             context.EnsureSeedData(Configuration.GetSection(nameof(ConfigSettings))["TRANSFORMERS_WITH_GOD_MODE"]);
             context.Database.Migrate();
         }
