@@ -123,8 +123,6 @@ namespace WarForCybertron.Service.Tests
 
         private ServiceResponse<T> GetGenericServiceResponse<T>() where T : class
         {
-            // T serviceResponseEntity = null;
-
             var serviceResponseEntity = typeof(T) switch
             {
                 Type dto when dto == typeof(TransformerDTO) => GetTransformerDTOObject() as T,
@@ -132,32 +130,6 @@ namespace WarForCybertron.Service.Tests
                 Type war when war == typeof(WarSimulation) => new WarSimulation(new List<TransformerDTO> { GetTransformerDTOObject() }, new List<TransformerDTO> { GetTransformerDTOObject() }) as T,
                 _ => null
             };
-
-            //switch (typeof(T))
-            //{
-            //    case Type dto when dto == typeof(TransformerDTO):
-            //        serviceResponseEntity = GetTransformerDTOObject() as T;
-            //        break;
-            //    case Type list when list == typeof(List<TransformerDTO>):
-            //        serviceResponseEntity = new List<TransformerDTO> { GetTransformerDTOObject() } as T;
-            //        break;
-            //    case Type war when war == typeof(WarSimulation):
-            //        serviceResponseEntity = new WarSimulation(new List<TransformerDTO> { GetTransformerDTOObject() }, new List<TransformerDTO> { GetTransformerDTOObject() }) as T;
-            //        break;
-            //}
-
-            //if (typeof(T) == typeof(TransformerDTO))
-            //{
-            //    serviceResponseEntity = GetTransformerDTOObject() as T;
-            //}
-            //else if (typeof(T) == typeof(List<TransformerDTO>))
-            //{
-            //    serviceResponseEntity = new List<TransformerDTO> { GetTransformerDTOObject() } as T;
-            //}
-            //else if (typeof(T) == typeof(WarSimulation))
-            //{
-            //    serviceResponseEntity = new WarSimulation(new List<TransformerDTO> { GetTransformerDTOObject() }, new List<TransformerDTO> { GetTransformerDTOObject() }) as T;
-            //}
 
             return new ServiceResponse<T>(serviceResponseEntity, string.Empty, true);
         }
