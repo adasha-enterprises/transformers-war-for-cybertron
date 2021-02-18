@@ -14,7 +14,7 @@ namespace WarForCybertron.Service.Tests
         public async void CanGetListOfTransformerDTOObjectsFromService()
         {
             // arrange
-            var setupResponse = GetListOfTransformerDTOObjectsServiceResponse();
+            var setupResponse = GetGenericServiceResponse<List<TransformerDTO>>(); // GetListOfTransformerDTOObjectsServiceResponse();
             var mockService = new Mock<IWarForCybertronService>();
             mockService.Setup(s => s.GetTransformers(It.IsAny<Allegiance>()).Result).Returns(setupResponse);
 
@@ -30,7 +30,7 @@ namespace WarForCybertron.Service.Tests
         {
             // arrange
             var transformerDTO = GetTransformerDTOObject();
-            var setupResponse = GetTransformerDTOObjectServiceResponse();
+            var setupResponse = GetGenericServiceResponse<TransformerDTO>(); // GetTransformerDTOObjectServiceResponse();
             var mockService = new Mock<IWarForCybertronService>();
             mockService.Setup(s => s.CreateTransformer(transformerDTO).Result).Returns(setupResponse);
 
@@ -47,7 +47,7 @@ namespace WarForCybertron.Service.Tests
         {
             // arrange
             var guid = Guid.Parse(id);
-            var setupResponse = GetTransformerDTOObjectServiceResponse();
+            var setupResponse = GetGenericServiceResponse<TransformerDTO>(); // GetTransformerDTOObjectServiceResponse();
             var mockService = new Mock<IWarForCybertronService>();
             mockService.Setup(s => s.GetTransformer(It.IsAny<Guid>()).Result).Returns(setupResponse);
 
@@ -63,7 +63,7 @@ namespace WarForCybertron.Service.Tests
         {
             // arrange
             var transformerDTO = GetTransformerDTOObject();
-            var setupResponse = GetTransformerDTOObjectServiceResponse();
+            var setupResponse = GetGenericServiceResponse<TransformerDTO>(); // GetTransformerDTOObjectServiceResponse();
             var mockService = new Mock<IWarForCybertronService>();
             mockService.Setup(s => s.UpdateTransformer(transformerDTO).Result).Returns(setupResponse);
 
@@ -106,15 +106,60 @@ namespace WarForCybertron.Service.Tests
             Assert.IsType<int>(response);
         }
 
-        //TODO: need to think about using generics for returning different types of entities in the service response
-        private ServiceResponse<TransformerDTO> GetTransformerDTOObjectServiceResponse()
+        [Fact]
+        public async void CanSimulateWar()
         {
-            return new ServiceResponse<TransformerDTO>(GetTransformerDTOObject(), string.Empty, true);
+            // arrange
+            var setupResponse = GetGenericServiceResponse<WarSimulation>();
+            var mockService = new Mock<IWarForCybertronService>();
+            mockService.Setup(s => s.SimulateWar().Result).Returns(setupResponse);
+
+            // act
+            var serviceResponse = await mockService.Object.SimulateWar();
+
+            // assert
+            Assert.IsType<WarSimulation>(serviceResponse.ResponseEntity);
         }
 
-        private ServiceResponse<List<TransformerDTO>> GetListOfTransformerDTOObjectsServiceResponse()
+        private ServiceResponse<T> GetGenericServiceResponse<T>() where T : class
         {
-            return new ServiceResponse<List<TransformerDTO>>(new List<TransformerDTO> { GetTransformerDTOObject() }, string.Empty, true);
+            // T serviceResponseEntity = null;
+
+            var serviceResponseEntity = typeof(T) switch
+            {
+                Type dto when dto == typeof(TransformerDTO) => GetTransformerDTOObject() as T,
+                Type list when list == typeof(List<TransformerDTO>) => new List<TransformerDTO> { GetTransformerDTOObject() } as T,
+                Type war when war == typeof(WarSimulation) => new WarSimulation(new List<TransformerDTO> { GetTransformerDTOObject() }, new List<TransformerDTO> { GetTransformerDTOObject() }) as T,
+                _ => null
+            };
+
+            //switch (typeof(T))
+            //{
+            //    case Type dto when dto == typeof(TransformerDTO):
+            //        serviceResponseEntity = GetTransformerDTOObject() as T;
+            //        break;
+            //    case Type list when list == typeof(List<TransformerDTO>):
+            //        serviceResponseEntity = new List<TransformerDTO> { GetTransformerDTOObject() } as T;
+            //        break;
+            //    case Type war when war == typeof(WarSimulation):
+            //        serviceResponseEntity = new WarSimulation(new List<TransformerDTO> { GetTransformerDTOObject() }, new List<TransformerDTO> { GetTransformerDTOObject() }) as T;
+            //        break;
+            //}
+
+            //if (typeof(T) == typeof(TransformerDTO))
+            //{
+            //    serviceResponseEntity = GetTransformerDTOObject() as T;
+            //}
+            //else if (typeof(T) == typeof(List<TransformerDTO>))
+            //{
+            //    serviceResponseEntity = new List<TransformerDTO> { GetTransformerDTOObject() } as T;
+            //}
+            //else if (typeof(T) == typeof(WarSimulation))
+            //{
+            //    serviceResponseEntity = new WarSimulation(new List<TransformerDTO> { GetTransformerDTOObject() }, new List<TransformerDTO> { GetTransformerDTOObject() }) as T;
+            //}
+
+            return new ServiceResponse<T>(serviceResponseEntity, string.Empty, true);
         }
 
         private TransformerDTO GetTransformerDTOObject()
